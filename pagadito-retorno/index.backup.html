@@ -15,7 +15,6 @@
       min-height: 100vh;
       margin: 0;
       padding: 20px;
-8
     }
     .card {
       background-color: #1e293b;
@@ -54,10 +53,9 @@
       const token = params.get("token") || params.get("value") || "";
       const ern = params.get("ern") || params.get("ern_value") || "";
 
-          const endpoint = "https://fnpoooaxypweq1lbpm.supabase.co/functions/v1/verificar-pago";
+          const endpoint = "https://fnpoooaayxpweqlilbpm.supabase.co/functions/v1/verificar-pago";
 
-      if (!token) {
-        document.getElementById("content").innerHTML = `
+      if (!token) {        document.getElementById("content").innerHTML = `
           <h2 style="color: #ef4444;">Faltan Parámetros</h2>
           <p style="color: #94a3b8;">No se detectó el token en la URL.</p>
           <p style="color: #64748b; font-size: 12px; margin-top: 10px;">URL: ${window.location.href}</p>
