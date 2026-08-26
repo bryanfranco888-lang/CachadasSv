@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmación de Pago - CachadasSV</title>
+  <title>Procesando Pago - CachadasSV</title>
+
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f4f5;
+      color: #18181b;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,88 +18,153 @@
       padding: 20px;
       box-sizing: border-box;
     }
+
     .card {
-      background-color: #1e293b;
-      border-radius: 16px;
-      padding: 32px 24px;
-      max-width: 450px;
-      width: 100%;
-      text-align: center;
+      background-color: #242424;
       border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
     }
+
+    .spinner {
+      border: 4px solid #334155;
+      border-top: 4px solid #38bdf8;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
     h2 {
-      font-size: 22px;
-      margin: 0 0 12px;
+      font-size: 20px;
+      margin: 0 0 8px;
+      color: #f8fafc;
     }
-    .success {
-      color: #4ade80;
-    }
-    .error {
-      color: #ef4444;
-    }
+
     p {
       color: #94a3b8;
       font-size: 14px;
-      margin: 8px 0;
-      word-break: break-all;
-    }
-    .details {
-      background-color: #0f172a;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 16px;
-      text-align: left;
-      border: 1px solid #334155;
-    }
-    .details p {
-      color: #f8fafc;
-      font-size: 13px;
       margin: 6px 0;
-    }
-    .label {
-      color: #38bdf8;
-      font-weight: bold;
+      word-break: break-all;
     }
   </style>
 </head>
+
 <body>
+
   <div id="content" class="card">
-    <h2 id="titulo">Procesando...</h2>
-    <p id="mensaje">Verificando los datos del retorno.</p>
+    <div class="spinner"></div>
+    <h2>Verificando tu pago...</h2>
+    <p>Por favor no cierres esta ventana.</p>
   </div>
 
   <script>
-    function procesarRetorno() {
+    async function validar() {
+
       const params = new URLSearchParams(window.location.search);
-      
-      // 1. Leer "token" o "value"
-      const token = params.get("token") || params.get("value") || "";
-      
-      // 2. Leer "ern" o "ern_value"
-      const ern = params.get("ern") || params.get("ern_value") || "";
 
-      const contentDiv = document.getElementById("content");
+      const token =
+        params.get("token") ||
+        params.get("value") ||
+        "";
 
-      // 3. Mostrar en pantalla "Pago recibido" y los valores recibidos
-      if (token) {
-        contentDiv.innerHTML = `
-          <h2 class="success">¡Pago Recibido!</h2>
-          <p>Tu transacción ha sido retornada con éxito.</p>
-          <div class="details">
-            <p><span class="label">Token:</span> ${token}</p>
-            <p><span class="label">ERN:</span> ${ern || 'No especificado'}</p>
-          </div>
+      const ern =
+        params.get("ern") ||
+        params.get("ern_value") ||
+        "";
+
+      console.log("[CACHADAS] TOKEN:", token);
+      console.log("[CACHADAS] ERN:", ern);
+
+      if (!token) {
+        document.getElementById("content").innerHTML = `
+          <h2 style="color:#ef4444;">Faltan parámetros</h2>
+          <p>No se recibió el token de Pagadito.</p>
         `;
-      } else {
-        contentDiv.innerHTML = `
-          <h2 class="error">Sin Datos de Pago</h2>
-          <p>No se encontraron parámetros de verificación en la URL.</p>
+        return;
+      }
+
+      /*
+       * URL CORRECTA DEL PROYECTO SUPABASE
+       */
+      const endpoint =
+        "https://fnpoooaayxpweqlilbpm.supabase.co/functions/v1/verificar-pago";
+
+      try {
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            token: token,
+            ern: ern
+          })
+        });
+
+        console.log(
+          "[CACHADAS] STATUS SUPABASE:",
+          response.status
+        );
+
+        const resultado = await response.text();
+
+        console.log(
+          "[CACHADAS] RESPUESTA SUPABASE:",
+          resultado
+        );
+
+        document.open();
+        document.write(resultado);
+        document.close();
+
+      } catch (err) {
+
+        console.error(
+          "[CACHADAS] ERROR:",
+          err
+        );
+
+        document.getElementById("content").innerHTML = `
+          <h2 style="color:#ef4444;">
+            Error de conexión
+          </h2>
+
+          <p>
+            No fue posible comunicarse con el servidor de verificación.
+          </p>
+
+          <p style="color:#38bdf8;font-size:12px;">
+            Token: ${token}
+          </p>
+
+          <p style="color:#38bdf8;font-size:12px;">
+            ERN: ${ern}
+          </p>
         `;
       }
     }
 
-    procesarRetorno();
+    validar();
   </script>
+
 </body>
 </html>
