@@ -17,7 +17,7 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [isRegisterMode, sqqqqqmetIsRegisterMode] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
 
   const [anuncios, setAnuncios] = useState([]);
@@ -72,6 +72,39 @@ export default function App() {
       setAuthLoading(false);
     }
   }
+
+  async function iniciarPagoPagadito() {
+        try {
+              setAuthLoading(true);
+                    const response = await fetch(`${SUPABASE_URL}/functions/v1/super-function`, {
+                            method: 'POST',
+                                    headers: {
+                                              'Content-Type': 'application/json',
+                                                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                                                                },
+                                                                        body: JSON.stringify({
+                                                                                  nombre_producto: 'Reparación de Pantalla',
+                                                                                            precio: 15.00,
+                                                                                                      tipo_beneficio: 'Diagnóstico'
+                                                                                                              })
+                                                                                                                    });
+
+                                                                                                                          const data = await response.json();
+                                                                                                                                if (!response.ok) throw new Error(data.error || 'Error al generar el pago');
+
+                                                                                                                                      alert("¡Enlace de pago generado con éxito!");
+                                                                                                                                            console.log("URL de pago:", data.url_pago);
+                                                                                                                                                  
+                                                                                                                                            
+                                                                                                                                                      } catch (e) {
+                                                                                                                                                            alert("Error: " + e.message);
+                                                                                                                                                                } finally {
+                                                                                                                                                                      setAuthLoading(false);
+                                                                                                                                                                          }
+                                                                                                                                                                            }
+                                                                                                                                                                            
+  }
+
 
   async function iniciarSesionConEmail() {
     if (!authEmail || !authPassword) {

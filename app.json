@@ -1,29 +1,18 @@
 {
   "expo": {
-    "name": "cachadasv",
-    "slug": "snack-776e4a17-17fc-45d3-a5dc-d27b85917f26",
+    "name": "CachadasSv",
+    "slug": "cachadassv",
+    "owner": "bryanfranco888s-team",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
+      "package": "com.bryanfranco888.CachadasSv"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "extra": {
+      "eas": {
+        "projectId": "6827a4c7-3722-4684-a1ca-022043c714ff"
+      }
     }
   }
 }

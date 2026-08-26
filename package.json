@@ -8,15 +8,20 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "expo": "~54.0.36",
+    "@opentelemetry/api": "^1.0.0",
+    "@supabase/supabase-js": "*",
+    "expo": "~54.0.37",
+    "expo-av": "~16.0.8",
+    "expo-file-system": "~19.0.24",
+    "expo-image-manipulator": "~14.0.8",
+    "expo-image-picker": "~17.0.11",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
-    "react-native": "0.81.5",
-    "expo-av": "~16.0.8",
-    "expo-file-system": "~19.0.23",
-    "expo-image-picker": "~17.0.11",
-    "@opentelemetry/api": "^1.0.0",
-    "@supabase/supabase-js": "*"
+    "react-native": "0.81.5"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
+  }
 }

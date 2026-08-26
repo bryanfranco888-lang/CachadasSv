@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procesando Pago - CachadasSV</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .card {
+      background-color: #1e293b;
+      border-radius: 16px;
+      padding: 32px 24px;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .spinner {
+      border: 4px solid #334155;
+      border-top: 4px solid #38bdf8;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px auto;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    h2 { font-size: 20px; margin: 0 0 8px; color: #f8fafc; }
+    p { color: #94a3b8; font-size: 14px; margin: 0; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <div id="content" class="card">
+    <div class="spinner"></div>
+    <h2>Verificando tu pago...</h2>
+    <p>Por favor no cierres esta ventana.</p>
+  </div>
+
+  <script>
+    async function validar() {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token") || params.get("value") || "";
+      const ern = params.get("ern") || params.get("ern_value") || "";
+
+      const endpoint = "https://fnpoooaayxpweql1bpm.supabase.co/functions/v1/confirmar-pago";
+
+      if (!token) {
+        document.getElementById("content").innerHTML = `
+          <h2 style="color: #ef4444;">Faltan Parámetros</h2>
+          <p style="color: #94a3b8;">No se detectó el token en la URL.</p>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ token, ern })
+        });
+
+        const htmlResult = await response.text();
+
+        document.open();
+        document.write(htmlResult);
+        document.close();
+      } catch (err) {
+        document.getElementById("content").innerHTML = `
+          <h2 style="color: #ef4444;">Error de Diagnóstico</h2>
+          <p style="color: #94a3b8;">${err.message}</p>
+          <p style="color: #38bdf8; font-size: 12px; margin-top: 10px;">Token: ${token}</p>
+        `;
+      }
+    }
+    validar();
+  </script>
+</body>
+</html>
